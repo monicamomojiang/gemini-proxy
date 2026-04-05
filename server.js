@@ -28,6 +28,15 @@ app.get("/chat/completions", (req, res) => {
   res.json({ status: "ok" });
 });
 app.post("/v1/chat/completions", async (req, res) => {
+
+  // 👉 加在这里
+const auth = req.headers.authorization || "";
+
+// 👉 允许任何 key（不要拦）
+if (auth && !auth.startsWith("Bearer")) {
+  return res.status(401).json({ error: "Unauthorized" });
+}
+
   try {
     let messages = req.body.messages || [];
 

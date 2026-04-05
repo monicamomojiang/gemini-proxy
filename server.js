@@ -27,12 +27,10 @@ app.get("/v1/models", (req, res) => {
 app.get("/chat/completions", (req, res) => {
   res.json({ status: "ok" });
 });
-// 👉 主接口（统一入口）
 app.post("/v1/chat/completions", async (req, res) => {
   try {
     let messages = req.body.messages || [];
 
-    // 👉 只取最后一条（防爆 + 快）
     let lastMessage = messages[messages.length - 1]?.content || "你好";
 
     let contents = [
@@ -87,7 +85,6 @@ app.post("/v1/chat/completions", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 // 👉 启动服务
 app.listen(3000, () => {
   console.log("服务已启动：http://localhost:3000");

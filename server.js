@@ -29,7 +29,10 @@ app.get("/chat/completions", (req, res) => {
 });
 
 // 👉 主接口
-app.post("/chat/completions", async (req, res) => {
+app.post("/v1/chat/completions", async (req, res) => {
+  req.url = "/chat/completions";
+  app._router.handle(req, res);
+});
   try {
     let messages = req.body.messages || [];
 

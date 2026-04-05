@@ -27,31 +27,20 @@ app.get("/v1/models", (req, res) => {
 app.get("/chat/completions", (req, res) => {
   res.json({ status: "ok" });
 });
-
-// 👉 主接口
+// 👉 主接口（统一入口）
 app.post("/v1/chat/completions", async (req, res) => {
-  req.url = "/chat/completions";
-  app._router.handle(req, res);
-});
   try {
     let messages = req.body.messages || [];
 
-    // 👉 限制条数（防爆）
-    if (messages.length > 4) {
-      messages = messages.slice(-4);
-    }
+    // 👉 只取最后一条（防爆 + 快）
+    let lastMessage = messages[messages.length - 1]?.content || "你好";
 
-    // 👉 限制长度（关键）
-    messages = messages.map(m => ({
-      ...m,
-      content: m.content.slice(0, 500)
-    }));
-
-    // 👉 转换为 Gemini 格式
-    let contents = messages.map(m => ({
-      role: m.role === "assistant" ? "model" : "user",
-      parts: [{ text: m.content }]
-    }));
+    let contents = [
+      {
+        role: "user",
+        parts: [{ text: lastMessage }]
+      }
+    ];
 
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -94,6 +83,7 @@ app.post("/v1/chat/completions", async (req, res) => {
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });

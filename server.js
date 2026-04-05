@@ -36,12 +36,18 @@ async function handleChat(req, res) {
   try {
     const model = req.body.model || "gpt-3.5-turbo";
 
-    let messages = req.body.messages || [];
+   let lastMessage = "你好";
 
-// 👉 强制只保留最后一条（关键）
-let lastMessage = messages.length > 0 
-  ? messages[messages.length - 1].content.slice(0, 500)
-  : "你好";
+try {
+  if (req.body && req.body.messages) {
+    const last = req.body.messages[req.body.messages.length - 1];
+    if (last && last.content) {
+      lastMessage = String(last.content).slice(0, 300);
+    }
+  }
+} catch (e) {
+  lastMessage = "你好";
+}
 
     let contents = [
       {

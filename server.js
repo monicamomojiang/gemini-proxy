@@ -2,7 +2,7 @@
 const express = require("express");
 
 const app = express();
-app.use(express.json({ limit: "100kb" }));
+app.use(express.json({ limit: "10mb" }));
 
 const GEMINI_API_KEY = "AIzaSyCD1wi80mscT8pO8DYuzdfZSgufsP5hjbw";
 
